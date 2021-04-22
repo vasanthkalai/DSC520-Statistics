@@ -1,0 +1,93 @@
+---
+title: "ASSIGNMENT 4"
+author: "Vasanthakumar Kalaikkovan"
+date: '2021-04-21'
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+bibliography: bibliography.bib
+---
+
+# Markdown Basics
+
+## Favorite Foods
+
+1. Briyani
+2. Pizza
+3. Burger
+
+## Images
+
+image: ![](E:/Repos/StatisticsR/DSC520-Statistics/assignment04/All Cases (Log Plot)/10-all-cases-log.png) 
+
+## Add a Quote
+
+>It is very easy to defeat someone, but very difficult to win someone
+
+## Add an Equation
+
+$A = \pi*r^{2}$ 
+
+## Add a Footnote
+
+This is a footnote
+
+## Add Citations
+
+* R for Everyone
+* Discovering Statistics Using R
+
+# Inline Code
+
+```{r include=TRUE}
+library(ggplot2)
+theme_set(theme_minimal())
+covid_df <- read.csv("E:/Repos/StatisticsR/DSC520-Statistics/data/nytimes/covid-19-data/us-states.csv")
+heights_df <- read.csv("E:/Repos/StatisticsR/DSC520-Statistics/data/r4ds/heights.csv")
+ggplot(heights_df, aes(x=sex, y=earn)) + geom_point()+ geom_boxplot()
+
+covid_df <- read.csv("E:/Repos/StatisticsR/DSC520-Statistics/data/nytimes/covid-19-data/us-states.csv")
+covid_df$date <- as.Date(covid_df$date)
+california_df <- covid_df[ which( covid_df$state == "California"), ]
+ny_df <- covid_df[ which( covid_df$state == "New York"), ]
+florida_df <- covid_df[ which( covid_df$state == "Florida"), ]
+```
+
+## NY Times COVID-19 Data
+```{r echo=FALSE}
+ggplot(data=florida_df, aes(x=date, group=1)) +
+  geom_line(aes(y = cases, colour = "Florida")) +
+  geom_line(data=ny_df, aes(y = cases,colour="New York")) +
+  geom_line(data=california_df, aes(y = cases, colour="California")) +
+  scale_colour_manual("",
+                      breaks = c("Florida", "New York", "California"),
+                      values = c("darkred", "darkgreen", "steelblue")) +
+  xlab(" ") + ylab("Cases") + scale_y_log10()
+
+```
+
+## R4DS Height vs Earnings
+```{r echo=FALSE}
+ggplot(heights_df, aes(x=race, y=earn)) + geom_point()+ geom_boxplot()
+```
+
+# Tables
+
+## Knitr Table with Kable
+```{r include=TRUE}
+names<-c("Aragon","Bilbo","Frodo","Sam","Sauron")
+race<-c("Men","Hobbit","Hobbit","Hobbit","Maia")
+fellow<-c("Yes","No","Yes","Yes","No")
+ring<-c("No","Yes","Yes","Yes","Yes")
+age<-c("88","129","51","36","7052")
+lord_of_ring<-cbind(names,race,fellow,ring,age)
+colnames(lord_of_ring)<-c("Name","Race","In Fellowship?","Is Ring Bearer?","Age")
+knitr::kable(lord_of_ring, "pipe",caption="One Ring to Rule Them All")
+```
+
+## Pandoc Table
+pandoc.table(lord_of_ring, style = 'grid')
+
+# References
+
