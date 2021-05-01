@@ -1,0 +1,100 @@
+---
+title: "week7_KalaikkovanVasanthakumar"
+author: "Vasanthakumar Kalaikkovan"
+date: "30/04/2021"
+output: pdf_document
+---
+
+```{r}
+setwd("E:/Repos/StatisticsR/DSC520-Statistics/week7")
+survey_df <- read.csv("student-survey.csv")
+head(survey_df)
+```
+Use R to calculate the covariance of the Survey variables and provide an explanation of why you would use this calculation and what the results indicate.
+
+```{r}
+cov(survey_df$TimeReading,survey_df$TimeTV)
+```
+The result is in negative and thus Time-Reading and Time-TV are negatively related.
+```{r}
+cov(survey_df$TimeReading,survey_df$Happiness)
+```
+The result is in negative and thus Time-Reading and Happiness are negatively related.
+```{r}cov(survey_df$TimeTV,survey_df$Happiness)
+```
+The result is in positive and thus Time-TV and Happiness are positively related.
+```{r}
+cov(survey_df$TimeReading,survey_df$Gender)
+```
+The result is in negative and thus Time-Reading and Gender are negatively related.
+```{r}
+cov(survey_df$TimeTV,survey_df$Gender)
+```
+The result is in positive and thus Time-TV and Gender are positively related.
+```{r}
+cov(survey_df$Happiness,survey_df$Gender)
+```
+The result is in positive and thus Happiness and Gender are positively related.
+
+Examine the Survey data variables. What measurement is being used for the variables? Explain what effect changing the measurement being used for the variables would have on the covariance calculation. Would this be a problem? Explain and provide a better alternative if needed.
+
+Answer:
+Time-Reading - In hours
+Time-TV - In minutes
+Happiness - In Scale 0-100
+Gender - Binary 0 and 1
+Except gender all other variables are in numeric
+And I would just omit computing Covariance between Gender and the others since its not really relevant to the research question.
+
+Choose the type of correlation test to perform, explain why you chose this test, and make a prediction if the test yields a positive or negative correlation?
+```{r}
+cov(survey_df$TimeReading,survey_df$TimeTV)
+```
+Answer
+Is there relationship between time spent reading and watching TV?
+I choose this because both variables are time related
+Its negatively related and the prediction is if someone spends more time in reading their time watching TV goes down.
+
+Perform a correlation analysis of:
+All variables
+```{r}
+cor(survey_df, use = "complete.obs", method = "pearson")
+```
+A single correlation between two a pair of the variables
+```{r}
+cor(survey_df$TimeReading, survey_df$Happiness)
+```
+Repeat your correlation test in step 2 but set the confidence interval at 99%
+```{r}
+cor.test(survey_df$TimeReading, survey_df$Happiness, conf.level = .99)
+```
+Describe what the calculations in the correlation matrix suggest about the relationship between the variables. Be specific with your explanation.
+Answer
+Time Reading and time TV has a negative correlation
+Time reading and Happiness has negative correlation
+Time TV and Happiness has negative correlation
+All above three comparison shows if one goes up other variable will go down.
+
+Calculate the correlation coefficient and the coefficient of determination, describe what you conclude about the results.
+```{r}
+survey_df1 <- survey_df[, c("TimeReading", "TimeTV", "Happiness")]
+cor(survey_df1)
+```
+Time TV and Happiness has moderate correlation
+Time reading and Time TV has strong correlation
+
+Based on your analysis can you say that watching more TV caused students to read less? Explain.
+Answer
+Based on the above correlation, there is a strong evidence that more reading leads to less watching TV
+
+
+Pick three variables and perform a partial correlation, documenting which variable you are “controlling”. 
+Explain how this changes your interpretation and explanation of the results.
+```{r}
+library(ggm)
+partial_correlation <- pcor(c("TimeReading", "TimeTV", "Happiness"), var(survey_df1))
+partial_correlation^2
+```
+In this dataset, Happiness is being controlled here because Time TV accounts Time Reading and thus Happiness is controlled.
+
+
