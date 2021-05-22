@@ -1,0 +1,129 @@
+---
+title: "MovieAnalysis_FinalProject"
+author: "Vasanthakumar Kalaikkovan"
+date: "22/05/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+setwd("E://Repos/StatisticsR/DSC520-Statistics/week10")
+```
+
+# Importing and Cleaning Data
+
+## Rating Dataset importing
+
+```{r Rating Dataset}
+library(readr)
+library(tidyr)
+df_ratings <- read_tsv('data.tsv', na = "\\N", quote = '')
+df_ratings<- na.omit(df_ratings)
+head(df_ratings)
+```
+## Crew Dataset importing
+
+```{r Crew Dataset}
+df_crews <- read_tsv('crew_data.tsv',na = "\\N")
+df_crews<- na.omit(df_crews)
+head(df_crews)
+```
+
+## Title Dataset importing
+
+```{r Title Dataset}
+library(dplyr)
+df_title_temp <- read_tsv('title_data.tsv',na = "\\N",quote = '')
+df_title_temp<- na.omit(df_title_temp)
+df_title<-df_title_temp %>% filter(ordering<=1)
+head(df_title)
+```
+# Final Dataset
+
+## Merging all the datasets on the movie id
+
+```{r}
+df_combined <- merge(df_crews,df_ratings)
+df_final <-merge(df_title,df_combined,by.x="titleId",by.y="tconst")
+head(df_final)
+
+#Modifying the director id for the visualization purpose
+df_final$directors[df_final$directors=="nm7132415,nm0880127,nm12374633,nm3123733,nm1699658"]<-"nm7132415+4"
+```
+# Questions for frture steps
+
+## What kind of plot are required to show the optimal output
+## What is the optimal form to represent the result
+
+
+# What information is not self-evident?
+
+## After eliminating the missing data and combining based on the movie id, the final dataset become very less comparing to the initial one. The result is going to be based on the available dataset which is very small.
+
+
+# What are different ways you could look at this data?
+
+## We can make the prediction based on the movie and its ratings but again we can predict the director's success rate. Please suggest some other way which will be opt in different ways.
+
+
+# How do you plan to slice and dice the data?
+
+## Slicing and dicing the data is happened in the final dataset merging itself.
+
+
+# How could you summarize your data to answer key questions?
+
+## Data has the movie title id, director id, number of votes, and average rating. Based on these column we can able to answer our questions.
+
+
+# What types of plots and tables will help you to illustrate the findings to your questions?
+
+# Scatter plot 
+
+```{r scatter plot}
+library(ggplot2)
+scatter_plot <- ggplot(data=df_final,aes(x=directors,y=averageRating,size=numVotes))+geom_point(aes(colour=titleId))+
+  theme(axis.title.x=element_text(colour="DarkGreen",size = 30),
+        axis.title.y = element_text(colour = "Red",size = 30),
+        axis.text.x = element_text(size=5),
+        axis.text.y = element_text(size=20),
+        legend.title = element_text(size=5),
+        legend.text=element_text(size=5),
+        legend.position = c(1,1),
+        legend.justification = c(1,1))
+scatter_plot
+```
+
+# Boxplot
+
+```{r box plot}
+boxplot<-ggplot(data=df_final,aes(x=directors,y=averageRating,colour=directors))+geom_boxplot(aes(colour=titleId)+
+  theme(axis.title.x=element_text(colour="DarkGreen",size = 30),
+        axis.title.y = element_text(colour = "Red",size = 30),
+        axis.text.x = element_text(size=2),
+        axis.text.y = element_text(size=20),
+        legend.title = element_text(size=2),
+        legend.text=element_text(size=2),
+        legend.position = c(1,1),
+        legend.justification = c(1,1)))
+boxplot
+```
+
+# Trend lines
+
+```{r Trend line}
+trend_line<-ggplot(data=df_final,aes(x=directors,y=averageRating,colour=directors))+geom_line()
+trend_line
+```
+
+
+# Histogram
+
+```{r Histogram}
+histogram<-ggplot(data=df_final,aes(x=numVotes,colour=directors))+geom_histogram(binwidth = 100)
+histogram
+```
+
+# Do you plan on incorporating any machine learning techniques to answer your research questions? Explain.
+
+## With the help the plot only, we can answer our question and there wont be any requirement for machine learning
