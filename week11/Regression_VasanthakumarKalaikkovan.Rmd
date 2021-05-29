@@ -1,0 +1,77 @@
+---
+title: "Regression_VasanthakumarKalaikkovan"
+author: "Vasanthakumar Kalaikkovan"
+date: "29/05/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Regression Algorithm
+
+Regression algorithms are used to predict numeric quantity while classification algorithms predict categorical outcomes. A spam filter is an example use case for a classification algorithm. The input dataset is emails labeled as either spam (i.e. junk emails) or ham (i.e. good emails). The classification algorithm uses features extracted from the emails to learn which emails fall into which category.In this problem, you will use the nearest neighbors algorithm to fit a model on two simplified datasets. The first dataset (found in binary-classifier-data.csv) contains three variables; label, x, and y. The label variable is either 0 or 1 and is the output we want to predict using the x and y variables (You worked with this dataset last week!). The second dataset (found in trinary-classifier-data.csv) is similar to the first dataset except that the label variable can be 0, 1, or 2.Note that in real-world datasets, your labels are usually not numbers, but text-based descriptions of the categories (e.g. spam or ham). In practice, you will encode categorical variables into numeric values.
+
+```{r library importing and data importing}
+library(class)
+library(gmodels)
+library(ggplot2)
+
+getwd()
+
+setwd("E://Repos/StatisticsR/DSC520-Statistics/week11")
+
+binary_df <- read.csv("binary-classifier-data.csv")
+trinary_df <- read.csv("trinary-classifier-data.csv")
+```
+Plot the data from each dataset using a scatter plot.
+
+```{r Binary Classifier Scatter Plot}
+ggplot(binary_df,aes(x=x,y=y,color=label))+geom_point()+labs(title="Binary Classifier Scatter Plot")
+```
+
+```{r Trinary Classifier Scatter Plot}
+ggplot(trinary_df,aes(x=x,y=y,color=label))+geom_point()+labs(title="Trinary Classifier Scatter Plot")
+```
+
+The k nearest neighbors algorithm categorizes an input value by looking at the labels for the k nearest points and assigning a category based on the most common label. In this problem, you will determine which points are nearest by calculating the Euclidean distance between two points. As a refresher, the Euclidean distance between two points: i.Fitting a model is when you use the input data to create a predictive model. There are various metrics you can use to determine how well your model fits the data. For this problem, you will focus on a single metric, accuracy. Accuracy is simply the percentage of how often the model predicts the correct result. If the model always predicts the correct result, it is 100% accurate. If the model always predicts the incorrect result, it is 0% accurate.                    ii.Fit a k nearest neighbors’ model for each dataset for k=3, k=5, k=10, k=15, k=20, and k=25. Compute the accuracy of the resulting models for each value of k. Plot the results in a graph where the x-axis is the different values of k and the y-axis is the accuracy of the model.
+
+```{r Binary Classifier Iteration}
+k <- c(3,5,10,15,20,25)
+binary_accuracy <- NULL
+
+for(i in 1:6)
+{
+  cat("k=NN Binary Classisfier:",k[i])
+  binary_knn<-knn(train=binary_df,test=binary_df,cl=as.factor(binary_df$label),k=k[i])
+  binary_table <- CrossTable(x=binary_df$label,y=binary_knn,prop.chisq = FALSE)
+  binary_accuracy[i] <-binary_table$prop.tbl[1,1]+binary_table$prop.tbl[2,2]
+}
+```
+
+```{r Trinary Classifier Iteration}
+
+trinary_accuracy <- NULL
+
+for(i in 1:6)
+{
+  cat("k=NN Trinary Classisfier:",k[i])
+  trinary_knn<-knn(train=trinary_df,test=trinary_df,cl=as.factor(trinary_df$label),k=k[i])
+  trinary_table <- CrossTable(x=trinary_df$label,y=trinary_knn,prop.chisq = FALSE)
+  trinary_accuracy[i] <-trinary_table$prop.tbl[1,1]+trinary_table$prop.tbl[2,2]
+}
+```
+```{r binary plot}
+plot(k,binary_accuracy,main="Binary k-NN Classsification Accuracy")
+```
+```{r trinary plot}
+plot(k,trinary_accuracy,main="Trinary k-NN Classsification Accuracy")
+```
+
+
+
+
+
+
+
