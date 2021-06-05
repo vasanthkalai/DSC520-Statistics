@@ -1,0 +1,154 @@
+---
+title: "Final_Project"
+author: "Vasanthakumar Kalaikkovan"
+date: "05/06/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+setwd("E://Repos/StatisticsR/DSC520-Statistics/week10")
+```
+
+# Introduction
+
+With the help of the dataset available in the Internet Movie Database (IMDb), we are trying to find which director has the most successful movies based on the ratings provided by the common people, critics, etc.
+
+# Problem statement addressed
+
+To find successful movie directors based on the ratings provided by movie viewers.
+
+# How you addressed this problem statement
+
+1.	Collecting Data
+2.	Combing the data sets
+3.	Cleaning the Data
+4.	Plots
+a.	Scatter plot
+b.	Box Plot
+c.	Trend Lines
+d.	Histogram
+
+# Analysis
+
+## Importing and Cleaning Data
+
+## Rating Dataset importing
+
+```{r Rating Dataset}
+library(readr)
+library(tidyr)
+df_ratings <- read_tsv('data.tsv', na = "\\N", quote = '')
+df_ratings<- na.omit(df_ratings)
+head(df_ratings)
+```
+## Crew Dataset importing
+
+```{r Crew Dataset}
+df_crews <- read_tsv('crew_data.tsv',na = "\\N")
+df_crews<- na.omit(df_crews)
+head(df_crews)
+```
+## Title Dataset importing
+
+```{r Title Dataset}
+library(dplyr)
+df_title_temp <- read_tsv('title_data.tsv',na = "\\N",quote = '')
+df_title_temp<- na.omit(df_title_temp)
+df_title<-df_title_temp %>% filter(ordering<=1)
+head(df_title)
+```
+## Final Dataset
+
+## Merging all the datasets on the movie id
+
+```{r}
+df_combined <- merge(df_crews,df_ratings)
+df_final <-merge(df_title,df_combined,by.x="titleId",by.y="tconst")
+head(df_final)
+
+#Modifying the director id for the visualization purpose
+df_final$directors[df_final$directors=="nm7132415,nm0880127,nm12374633,nm3123733,nm1699658"]<-"nm7132415+4"
+```
+
+# Implications
+
+## Scatter plot 
+
+```{r scatter plot}
+library(ggplot2)
+scatter_plot <- ggplot(data=df_final,aes(x=directors,y=averageRating,size=numVotes))+geom_point(aes(colour=titleId))+
+  theme(axis.title.x=element_text(colour="DarkGreen",size = 30),
+        axis.title.y = element_text(colour = "Red",size = 30),
+        axis.text.x = element_text(size=5),
+        axis.text.y = element_text(size=20),
+        legend.title = element_text(size=5),
+        legend.text=element_text(size=5),
+        legend.position = c(1,1),
+        legend.justification = c(1,1))
+scatter_plot
+```
+
+## Boxplot
+
+```{r box plot}
+boxplot<-ggplot(data=df_final,aes(x=directors,y=averageRating,colour=directors))+geom_boxplot(aes(colour=titleId)+
+  theme(axis.title.x=element_text(colour="DarkGreen",size = 30),
+        axis.title.y = element_text(colour = "Red",size = 30),
+        axis.text.x = element_text(size=2),
+        axis.text.y = element_text(size=20),
+        legend.title = element_text(size=2),
+        legend.text=element_text(size=2),
+        legend.position = c(1,1),
+        legend.justification = c(1,1)))
+boxplot
+```
+
+## Trend lines
+
+```{r Trend line}
+trend_line<-ggplot(data=df_final,aes(x=directors,y=averageRating,colour=directors))+geom_line()
+trend_line
+```
+
+## Histogram
+
+```{r Histogram}
+histogram<-ggplot(data=df_final,aes(x=numVotes,colour=directors))+geom_histogram(binwidth = 100)
+histogram
+```
+
+# Limitation
+
+As part of handling the missing data and combining the dataset, we have lost more data and the data loss is almost more than 50%. So, the prediction may vary from the exact answer because there is a huge chance of probability of missing good movies and directors due to missing value.Also, plots are not visible properly because of the labeling but I have tried my level best to display it in a better way.
+
+# Conclusion
+
+As per the analysis, I have found that the director with Id – nm0040220 has a high number of movie ratings, and based on our data, he is the best director. But there is a huge possibility that this data result may vary only because of missing data.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
